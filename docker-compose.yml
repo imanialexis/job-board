@@ -1,0 +1,22 @@
+version: '3'
+services:
+  db:
+    image: postgres:10.3
+    volumes:
+      - db_data:/var/lib/postgresql/data
+  web:
+    build: .
+    environment:
+      DATABASE_URL: db
+    tty: true
+    stdin_open: true
+    volumes:
+      - .:/job_board
+    command: bash -c 'rm -rf /job_board/tmp/pids/server.pid && bin/rails s -p 3000 -b 0.0.0.0'
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+volumes:
+  db_data:
+    driver: local
